@@ -4,7 +4,7 @@ import { ChevronUp, Search } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 
 function Section({ title, children }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   return (
     <div className="py-3 border-t border-gray-100">
       <button
@@ -21,28 +21,29 @@ function Section({ title, children }) {
   );
 }
 
-export default function FilterSidebar({ cars, filters, onFiltersChange }) {
+export default function FilterSidebar({ facets, filters, onFiltersChange, asDrawer = false }) {
   const [brandSearch, setBrandSearch] = useState("");
 
-  const getBrand = (car) => car.brand?.name ?? car.model.split(" ")[0];
+  const getBrand = (car) => car.brand?.name ?? car.model?.split(" ")[0];
 
-  const brands = [...new Set(cars.map(getBrand).filter(Boolean))].sort();
-  const fuelTypes = [...new Set(cars.map((c) => c.fuel_type))].sort();
-  const transmissions = [...new Set(cars.map((c) => c.transmission))].sort();
-  const bodyTypes = [...new Set(cars.map((c) => c.body_type))].sort();
-  const ownership = [...new Set(cars.map((c) => c.ownership))].sort();
-  // const registrationYears = [...new Set(cars.map((c) => c.registration_year))].sort((a, b) => b - a);
-   const minRegistrationYear = cars.length > 0 ? Math.min(...cars.map((c) => c.registration_year)) : 2000;
-   const maxRegistrationYear = cars.length > 0 ? Math.max(...cars.map((c) => c.registration_year)) : new Date().getFullYear();
-   const currentYearRange = filters.registrationYears ?? [minRegistrationYear, maxRegistrationYear];
+  const brands = [...new Set(facets.map(getBrand).filter(Boolean))].sort();
+  const fuelTypes = [...new Set(facets.map((c) => c.fuel_type))].sort();
+  const transmissions = [...new Set(facets.map((c) => c.transmission))].sort();
+  const bodyTypes = [...new Set(facets.map((c) => c.body_type))].sort();
+  const ownership = [...new Set(facets.map((c) => c.ownership))].sort();
   
-  // const kmDriven = [...new Set(cars.map((c) => c.km_driven))].sort((a, b) => a - b);
-  const minKmDriven = cars.length > 0 ? Math.min(...cars.map((c) => c.km_driven)) : 0;
-  const maxKmDriven = cars.length > 0 ? Math.max(...cars.map((c) => c.km_driven)) : 100000;
+  // const registrationYears = [...new Set(facets.map((c) => c.registration_year))].sort((a, b) => b - a);
+   const minRegistrationYear = facets.length > 0 ? Math.min(...facets.map((c) => c.registration_year)) : 2000;
+   const maxRegistrationYear = facets.length > 0 ? Math.max(...facets.map((c) => c.registration_year)) : new Date().getFullYear();
+   const currentYearRange = filters.registrationYears ?? [minRegistrationYear, maxRegistrationYear];
+
+  // const kmDriven = [...new Set(facets.map((c) => c.km_driven))].sort((a, b) => a - b);
+  const minKmDriven = facets.length > 0 ? Math.min(...facets.map((c) => c.km_driven)) : 0;
+  const maxKmDriven = facets.length > 0 ? Math.max(...facets.map((c) => c.km_driven)) : 100000;
   const currentKmRange = filters.kmDriven ?? [minKmDriven, maxKmDriven];
 
-  const minPrice = cars.length > 0 ? Math.min(...cars.map((c) => c.discounted_price)) : 0;
-  const maxPrice = cars.length > 0 ? Math.max(...cars.map((c) => c.discounted_price)) : 1000000;
+  const minPrice = facets.length > 0 ? Math.min(...facets.map((c) => c.discounted_price)) : 0;
+  const maxPrice = facets.length > 0 ? Math.max(...facets.map((c) => c.discounted_price)) : 1000000;
   const currentPriceRange = filters.priceRange ?? [minPrice, maxPrice];
 
   const filteredBrands = brands.filter((b) =>
@@ -73,9 +74,8 @@ export default function FilterSidebar({ cars, filters, onFiltersChange }) {
       kmDriven: null,
     });
 
-  return (
-    <aside className="w-60 shrink-0 self-start sticky top-4 h-screen overflow-y-auto scrollbar-thin">
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
+  const content = (
+    <div className="bg-white border border-gray-200 rounded-xl p-4">
         <div className="flex items-center justify-between mb-1">
           <h2 className="font-bold text-gray-900 text-base">Filters</h2>
           <button
@@ -133,7 +133,7 @@ export default function FilterSidebar({ cars, filters, onFiltersChange }) {
                 <span className="text-sm text-gray-700 group-hover:text-gray-900">
                   {brand}{" "}
                   <span className="text-gray-400">
-                    ({count(cars, (c) => getBrand(c) === brand)})
+                    ({count(facets, (c) => getBrand(c) === brand)})
                   </span>
                 </span>
               </label>
@@ -157,7 +157,7 @@ export default function FilterSidebar({ cars, filters, onFiltersChange }) {
                 <span className="text-sm text-gray-700 group-hover:text-gray-900">
                   {fuel}{" "}
                   <span className="text-gray-400">
-                    ({count(cars, (c) => c.fuel_type === fuel)})
+                    ({count(facets, (c) => c.fuel_type === fuel)})
                   </span>
                 </span>
               </label>
@@ -181,7 +181,7 @@ export default function FilterSidebar({ cars, filters, onFiltersChange }) {
                 <span className="text-sm text-gray-700 group-hover:text-gray-900">
                   {t}{" "}
                   <span className="text-gray-400">
-                    ({count(cars, (c) => c.transmission === t)})
+                    ({count(facets, (c) => c.transmission === t)})
                   </span>
                 </span>
               </label>
@@ -205,7 +205,7 @@ export default function FilterSidebar({ cars, filters, onFiltersChange }) {
                 <span className="text-sm text-gray-700 group-hover:text-gray-900">
                   {type}{" "}
                   <span className="text-gray-400">
-                    ({count(cars, (c) => c.body_type === type)})
+                    ({count(facets, (c) => c.body_type === type)})
                   </span>
                 </span>
               </label>
@@ -229,7 +229,7 @@ export default function FilterSidebar({ cars, filters, onFiltersChange }) {
                 <span className="text-sm text-gray-700 group-hover:text-gray-900">
                   {type}{" "}
                   <span className="text-gray-400">
-                    ({count(cars, (c) => c.ownership === type)})
+                    ({count(facets, (c) => c.ownership === type)})
                   </span>
                 </span>
               </label>
@@ -273,6 +273,13 @@ export default function FilterSidebar({ cars, filters, onFiltersChange }) {
           </div>  
           </Section>
       </div>
+  )
+
+  if (asDrawer) return content
+
+  return (
+    <aside className="hidden md:block w-60 shrink-0 self-start sticky top-4 max-h-[calc(100vh-1rem)] overflow-y-auto scrollbar-thin">
+      {content}
     </aside>
-  );
+  )
 }

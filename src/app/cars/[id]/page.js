@@ -3,9 +3,7 @@ import {
   ChevronRight,
   Shield,
   Phone,
-  Share2,
   Heart,
-  GitCompare,
   Calendar,
   Gauge,
   Zap,
@@ -25,6 +23,51 @@ import { getCarById } from "@/services/carService";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import ShareButton from "@/components/cars/ShareButton";
+import CompareButton from "@/components/cars/CompareButton";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ratha.in";
+
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const car = await getCarById(id);
+  if (!car) {
+    return { title: "Car Not Found" };
+  }
+
+  const brandName = car.brand?.name ?? car.model.split(" ")[0];
+  const title = `${brandName} ${car.model} – ${car.registration_year} | ₹${car.discounted_price.toLocaleString("en-IN")}`;
+  const description = `Buy ${brandName} ${car.model} (${car.registration_year}) – ${car.fuel_type}, ${car.transmission}, ${car.km_driven.toLocaleString()} km driven. Priced at ₹${car.discounted_price.toLocaleString("en-IN")}. ${car.ownership}. 167-point inspected and Ratha Assured.`;
+  const imageUrl = car.image
+    ? `https://directus-8b8q.onrender.com/assets/${car.image}`
+    : "/og-image.png";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/cars/${id}`,
+    },
+    openGraph: {
+      title: `${title} | Ratha`,
+      description,
+      url: `/cars/${id}`,
+      images: [
+        {
+          url: imageUrl,
+          width: 800,
+          height: 600,
+          alt: `${brandName} ${car.model} – Used Car on Ratha`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Ratha`,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
 
 function SpecItem({ Icon, label, value }) {
   if (!value) return null;
@@ -38,6 +81,92 @@ function SpecItem({ Icon, label, value }) {
         <p className="text-sm font-semibold text-gray-900">{value}</p>
       </div>
     </div>
+  );
+}
+
+function CarJsonLd({ car, brandName }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${brandName} ${car.model}`,
+    description:
+      car.description ||
+      `${brandName} ${car.model} – ${car.fuel_type}, ${car.transmission}, ${car.km_driven.toLocaleString()} km driven.`,
+    image: car.image
+      ? `https://directus-8b8q.onrender.com/assets/${car.image}`
+      : undefined,
+    brand: {
+      "@type": "Brand",
+      name: brandName,
+    },
+    offers: {
+      "@type": "Offer",
+      price: car.discounted_price,
+      priceCurrency: "INR",
+      availability: "https://schema.org/InStock",
+      seller: {
+        "@type": "Organization",
+        name: "Ratha",
+      },
+    },
+    vehicleConfiguration: car.transmission,
+    fuelType: car.fuel_type,
+    mileageFromOdometer: {
+      "@type": "QuantitativeValue",
+      value: car.km_driven,
+      unitCode: "KMT",
+    },
+    modelDate: car.registration_year?.toString(),
+    color: car.colour,
+    bodyType: car.body_type,
+    numberOfDoors: undefined,
+    seatingCapacity: car.seating_capacity,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+function BreadcrumbJsonLd({ car, brandName, id }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Used Cars",
+        item: `${SITE_URL}/cars`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: brandName,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: `${brandName} ${car.model}`,
+        item: `${SITE_URL}/cars/${id}`,
+      },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
   );
 }
 
@@ -59,21 +188,24 @@ export default async function CarDetailPage({ params }) {
 
   return (
     <div className="bg-white">
-      <div className="bg-gray-50 border-b border-gray-200">
+      <CarJsonLd car={car} brandName={brandName} />
+      <BreadcrumbJsonLd car={car} brandName={brandName} id={id} />
+
+      <nav aria-label="Breadcrumb" className="bg-gray-50 border-b border-gray-200">
         <div className="max-w-350 mx-auto px-6 py-3 flex items-center gap-2 text-sm text-gray-500 flex-wrap">
           <Link href="/" className="hover:text-gray-700">
             Home
           </Link>
-          <ChevronRight className="w-3 h-3 shrink-0" />
+          <ChevronRight className="w-3 h-3 shrink-0" aria-hidden="true" />
           <Link href="/cars" className="hover:text-gray-700">
             Used Cars
           </Link>
-          <ChevronRight className="w-3 h-3 shrink-0" />
+          <ChevronRight className="w-3 h-3 shrink-0" aria-hidden="true" />
           <span>{brandName}</span>
-          <ChevronRight className="w-3 h-3 shrink-0" />
+          <ChevronRight className="w-3 h-3 shrink-0" aria-hidden="true" />
           <span className="text-gray-900 font-medium">{car.model}</span>
         </div>
-      </div>
+      </nav>
 
       <div className="max-w-350 mx-auto px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_460px] gap-6 items-start">
@@ -82,14 +214,14 @@ export default async function CarDetailPage({ params }) {
           <div className="space-y-6">
             <Image
               src={`https://directus-8b8q.onrender.com/assets/${car.image}`}
-              alt={car.model}
+              alt={`${brandName} ${car.model} – ${car.registration_year} ${car.fuel_type} ${car.colour || ''} used car`}
               width={600}
               height={400}
               className="w-full h-auto rounded-xl object-contain bg-gray-100"
             />
 
-            <div className="border border-gray-200 rounded-xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
+            <section aria-labelledby="specs-heading" className="border border-gray-200 rounded-xl p-6">
+              <h2 id="specs-heading" className="text-xl font-bold text-gray-900 mb-6">
                 Specifications
               </h2>
 
@@ -174,7 +306,7 @@ export default async function CarDetailPage({ params }) {
                   </p>
                 </div>
               )}
-            </div>
+            </section>
           </div>
 
 
@@ -244,10 +376,7 @@ export default async function CarDetailPage({ params }) {
               </div>
 
               <div className="mt-3 grid grid-cols-3 gap-2">
-                <Button variant="outline">
-                  <GitCompare className="w-4 h-4" />
-                  Compare
-                </Button>
+                <CompareButton car={car} />
 
                 <ShareButton />
 
