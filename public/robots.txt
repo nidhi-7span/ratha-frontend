@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /cars/compare
+
+Sitemap: https://ratha.in/api/sitemap

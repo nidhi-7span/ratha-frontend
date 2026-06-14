@@ -1,8 +1,19 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
-import { Heart, Shield, Info, ArrowRight } from 'lucide-react'
+import { Heart, Shield, ArrowRight } from 'lucide-react'
+import { useCompare } from '@/context/CompareContext'
 
 export default function CarCard({ car }) {
+  const { addToCompare, removeFromCompare, isInCompare, compareList } = useCompare()
+  const checked = isInCompare(car.id)
+  const atMax = compareList.length >= 5 && !checked
+
+  const handleCompare = (e) => {
+    if (e.target.checked) addToCompare(car)
+    else removeFromCompare(car.id)
+  }
   const discountPct = Math.round(
     ((car.original_price - car.discounted_price) / car.original_price) * 100
   )
@@ -66,8 +77,14 @@ export default function CarCard({ car }) {
 
         
         <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-          <label className="flex items-center gap-1.5 cursor-pointer select-none">
-            <input type="checkbox" className="w-3.5 h-3.5 accent-amber-500" />
+          <label className={`flex items-center gap-1.5 select-none ${atMax ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'}`}>
+            <input
+              type="checkbox"
+              className="w-3.5 h-3.5 accent-amber-500"
+              checked={checked}
+              disabled={atMax}
+              onChange={handleCompare}
+            />
             <span className="text-xs text-gray-600">Compare</span>
           </label>
           <Link
