@@ -90,6 +90,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 🏛 Architecture
 
+![System Architecture Flowchart](./public/architecture)
+
 The frontend is architected using the modern Next.js App Router paradigm to ensure high performance, SEO friendliness, and a scalable codebase:
 
 - **Next.js App Router (`src/app`)**: Utilizes server components by default for optimized page loads and excellent SEO, pushing rendering work to the server where possible. Client components are used specifically where interactivity is required.
