@@ -17,9 +17,10 @@ export async function GET(request) {
   const sortBy = searchParams.get("sortBy") || "newest";
   const page = Number(searchParams.get("page")) || 1;
   const search = searchParams.get("search") || "";
+  const city = searchParams.get("city") || "";
 
   try {
-    const result = await getCarsPaged({ filters, sortBy, page, search });
+    const result = await getCarsPaged({ filters, sortBy, page, search, city });
     return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json(
