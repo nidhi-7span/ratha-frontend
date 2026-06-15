@@ -12,9 +12,18 @@ const SORT_MAP = {
   km_asc: "km_driven",
 };
 
-export const buildCarParams = (filters = {}, sortBy = "newest", search = "") => {
+export const buildCarParams = (filters = {}, sortBy = "newest", search = "", city = "") => {
   const params = {};
 
+  if (search) {
+    params["filter[_or][0][model][_icontains]"] = search;
+    params["filter[_or][1][variant][_icontains]"] = search;
+    params["filter[_or][2][brand][name][_icontains]"] = search;
+  }
+
+  if (city) {
+    params["filter[city][_eq]"] = city;
+  }
 
   if (filters.priceRange) {
     params["filter[discounted_price][_between]"] = filters.priceRange.join(",");
@@ -53,11 +62,12 @@ export const getCarsPaged = async ({
   page = 1,
   limit = 12,
   search = "",
+  city = "",
 }) => {
   const response = await api.get("/cars", {
     params: {
       "fields[]": FIELDS,
-      ...buildCarParams(filters, sortBy, search),
+      ...buildCarParams(filters, sortBy, search, city),
       page,
       limit,
       meta: "filter_count",
@@ -72,6 +82,13 @@ export const getCarFacets = async () => {
     params: { "fields[]": FACET_FIELDS },
   });
   return response.data.data;
+};
+
+export const getCities = async () => {
+  const response = await api.get("/cars", {
+    params: { "groupBy[]": "city" },
+  });
+  return response.data.data.map(item => item.city).filter(Boolean);
 };
 
 export const getCars = async () => {
