@@ -49,8 +49,15 @@ export default function Navbar() {
     <nav className="bg-[#111111] text-white border-b border-white/10 relative z-50">
       <div className="max-w-350 mx-auto px-4 sm:px-6 h-16 flex items-center gap-4 sm:gap-8">
         <Link href="/" className="shrink-0">
-          <Image src="/logo.png" alt="Ratha" width={100} height={100} className="h-18 w-auto" priority />
-        </Link>
+          <Image
+            src="/logo.png"
+            alt="Ratha"
+            width={100}
+            height={100}
+            className="h-18 w-auto"
+            priority
+            unoptimized
+          />        </Link>
 
         <div className="hidden sm:flex flex-1 max-w-xl">
           <form onSubmit={handleSearch} className="relative w-full">
@@ -67,7 +74,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4 sm:gap-7 text-sm ml-auto whitespace-nowrap">
           <div className="relative hidden sm:block" ref={dropdownRef}>
-            <button 
+            <button
               onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
               className="hover:text-amber-400 transition-colors font-medium flex items-center gap-1"
             >
@@ -76,7 +83,7 @@ export default function Navbar() {
             </button>
             {isCityDropdownOpen && (
               <div className="absolute top-full mt-4 right-0 w-48 bg-white text-black rounded-lg shadow-lg py-2 z-50 border border-gray-100">
-                <Link 
+                <Link
                   href="/cars"
                   onClick={() => setIsCityDropdownOpen(false)}
                   className="block px-4 py-2 hover:bg-gray-50 text-sm font-medium"
@@ -85,7 +92,7 @@ export default function Navbar() {
                 </Link>
                 <div className="border-t border-gray-100 my-1"></div>
                 {cities.map(city => (
-                  <Link 
+                  <Link
                     key={city}
                     href={`/cars?city=${encodeURIComponent(city)}`}
                     onClick={() => setIsCityDropdownOpen(false)}
@@ -97,7 +104,7 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          <button 
+          <button
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             className="sm:hidden text-gray-400 hover:text-white transition-colors"
           >

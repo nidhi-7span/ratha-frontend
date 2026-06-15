@@ -125,14 +125,8 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
 
       <div className="flex-1 min-w-0">
         
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <div>
+        <div className="flex items-start justify-between gap-2 mb-2">  
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Used Cars</h1>
-            <p className="text-gray-500 text-sm mt-0.5">
-              {total} cars found{initialSearch ? ` for "${initialSearch}"` : ''}{initialCity ? ` in ${initialCity}` : ''}
-            </p>
-          </div>
-
           <Sheet>
             <SheetTrigger className="md:hidden flex items-center gap-1.5 border border-gray-300 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors shrink-0">
               <SlidersHorizontal className="w-4 h-4" />
@@ -171,7 +165,7 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
             </div>
           </div>
 
-          <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+          <div className="hidden md:block border border-gray-300 rounded-lg overflow-hidden ">
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}

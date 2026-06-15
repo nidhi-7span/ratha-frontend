@@ -7,6 +7,9 @@ export const metadata = {
   title: 'Browse Used Cars – Verified & Inspected',
   description:
     'Explore our curated collection of verified used cars. Filter by brand, fuel type, transmission, price, and more. Every car is 167-point inspected with easy EMI options.',
+  icons: {
+    icon: '/logo.png',
+  },
   alternates: {
     canonical: '/cars',
   },
