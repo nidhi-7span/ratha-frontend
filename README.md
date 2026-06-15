@@ -2,6 +2,22 @@
 
 Ratha is a premium used car marketplace web application built with Next.js. It provides users with a seamless experience to find, compare, and purchase verified, 167-point inspected used cars with transparent pricing and easy EMI options.
 
+## 🌐 Live Preview
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-View_Project-success?style=for-the-badge&logo=vercel)](https://ratha.nidhieeeee.codes/)
+
+Click the button above to view the live project.
+
+![Ratha Live Preview](./public/preview.png)
+
+## 📹 Video Demonstrations
+
+Watch the walkthrough of the project:
+
+- [Part 1: Overview and Features](https://www.loom.com/share/9b6900cfac88479399f0c6ebc2dec409)
+- [Part 2: Car Searching and Filtering](https://www.loom.com/share/9c8182174aab4a7283c9dc88f032420e)
+- [Part 3: Car Comparison and Details](https://www.loom.com/share/d038ac5edb3e4ff7a014ee75dbb2fc19)
+
 ## 🚀 Features
 
 - **Premium UI/UX:** A modern, responsive design featuring a dark-themed hero section and clean, light-themed car listings.
@@ -71,6 +87,16 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
   - `common/`: Shared UI components like `Navbar.jsx`.
 - `src/services/`: API integration and data fetching logic.
 - `src/context/`: React context providers for state sharing.
+
+## 🏛 Architecture
+
+The frontend is architected using the modern Next.js App Router paradigm to ensure high performance, SEO friendliness, and a scalable codebase:
+
+- **Next.js App Router (`src/app`)**: Utilizes server components by default for optimized page loads and excellent SEO, pushing rendering work to the server where possible. Client components are used specifically where interactivity is required.
+- **Component-Driven Design (`src/components`)**: Reusable UI elements are modularized. The application blends custom components with accessible, unstyled primitives from **Base UI** and styled blocks from **Shadcn UI**.
+- **Styling (`Tailwind CSS v4`)**: Utility-first CSS framework is used for rapid, responsive UI development.
+- **State Management & Context (`src/context`)**: React Context API is employed to manage global states (like filter selections or comparison lists) without excessive prop drilling.
+- **API & Data Fetching (`src/services`)**: **Axios** is used for client-side API requests. Data fetching logic is encapsulated within service modules to separate concerns from UI components.
 
 ## 🚀 Deployment
 
