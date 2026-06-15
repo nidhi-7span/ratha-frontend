@@ -8,13 +8,14 @@ import FilterSidebar from '../filters/FilterSidebar'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 
-async function fetchCarsPage({ filters, sortBy, page, search }) {
+async function fetchCarsPage({ filters, sortBy, page, search, city }) {
   const params = new URLSearchParams({
     filters: JSON.stringify(filters),
     sortBy,
     page: String(page),
   })
   if (search) params.set('search', search)
+  if (city) params.set('city', city)
   const res = await fetch(`/api/cars?${params}`)
   if (!res.ok) throw new Error('Failed to fetch cars')
   return res.json()
@@ -31,7 +32,7 @@ const EMPTY_FILTERS = {
   kmDriven: null,
 }
 
-export default function CarsListing({ initialCars, total: initialTotal, facets, initialSearch = '' }) {
+export default function CarsListing({ initialCars, total: initialTotal, facets, initialSearch = '', initialCity = '' }) {
   const router = useRouter()
   const [filters, setFilters] = useState(EMPTY_FILTERS)
   const [sortBy, setSortBy] = useState('newest')
@@ -43,14 +44,11 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
   const [loading, setLoading] = useState(false)
   const [isFiltering, setIsFiltering] = useState(false)
 
-  const displayedCars = useMemo(() => {
-    if (!initialSearch) return cars
-    const q = initialSearch.toLowerCase()
-    return cars.filter(c =>
-      c.model?.toLowerCase().includes(q) ||
-      c.variant?.toLowerCase().includes(q)
-    )
-  }, [cars, initialSearch])
+  useEffect(() => {
+    setCars(initialCars)
+    setTotal(initialTotal)
+    setPage(1)
+  }, [initialSearch, initialCity, initialCars, initialTotal])
 
   const hasMore = cars.length < total
 
@@ -70,7 +68,7 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
     setIsFiltering(true)
     const timer = setTimeout(async () => {
       try {
-        const { data, total: newTotal } = await fetchCarsPage({ filters, sortBy, page: 1, search: initialSearch })
+        const { data, total: newTotal } = await fetchCarsPage({ filters, sortBy, page: 1, search: initialSearch, city: initialCity })
         if (token !== requestId.current) return
         setCars(data)
         setTotal(newTotal)
@@ -93,7 +91,7 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
     const nextPage = page + 1
     setLoading(true)
     try {
-      const { data } = await fetchCarsPage({ filters, sortBy, page: nextPage, search: initialSearch })
+      const { data } = await fetchCarsPage({ filters, sortBy, page: nextPage, search: initialSearch, city: initialCity })
       if (token !== requestId.current) return
       setCars((prev) => [...prev, ...data])
       setPage(nextPage)
@@ -117,7 +115,7 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
 
   const clearAll = () => {
     setFilters(EMPTY_FILTERS)
-    if (initialSearch) router.push('/cars')
+    if (initialSearch || initialCity) router.push('/cars')
   }
 
   return (
@@ -131,7 +129,7 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Used Cars</h1>
             <p className="text-gray-500 text-sm mt-0.5">
-              {initialSearch ? displayedCars.length : total} cars found{initialSearch ? ` for "${initialSearch}"` : ''}
+              {total} cars found{initialSearch ? ` for "${initialSearch}"` : ''}{initialCity ? ` in ${initialCity}` : ''}
             </p>
           </div>
 
@@ -195,7 +193,18 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
               <span className="flex items-center gap-1.5 bg-amber-100 text-amber-800 text-sm px-3 py-1 rounded-full">
                 Search: {initialSearch}
                 <button
-                  onClick={() => router.push('/cars')}
+                  onClick={() => router.push(initialCity ? `/cars?city=${encodeURIComponent(initialCity)}` : '/cars')}
+                  className="text-amber-600 hover:text-amber-900 leading-none"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {initialCity && (
+              <span className="flex items-center gap-1.5 bg-amber-100 text-amber-800 text-sm px-3 py-1 rounded-full">
+                City: {initialCity}
+                <button
+                  onClick={() => router.push(initialSearch ? `/cars?search=${encodeURIComponent(initialSearch)}` : '/cars')}
                   className="text-amber-600 hover:text-amber-900 leading-none"
                 >
                   ×
@@ -225,7 +234,7 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
           </div>
         )}
 
-        {displayedCars.length === 0 && !loading ? (
+        {cars.length === 0 && !loading ? (
           <div className="text-center py-24 text-gray-400">
             No cars match the selected filters.
           </div>
@@ -240,7 +249,7 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
             >
               {isFiltering
                 ? Array.from({ length: 9 }).map((_, i) => <CarCardSkeleton key={i} />)
-                : displayedCars.map((car) => <CarCard key={car.id} car={car} />)}
+                : cars.map((car) => <CarCard key={car.id} car={car} />)}
             </div>
 
            
