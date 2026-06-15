@@ -1,8 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Ratha Frontend
 
-## Getting Started
+Ratha is a premium used car marketplace web application built with Next.js. It provides users with a seamless experience to find, compare, and purchase verified, 167-point inspected used cars with transparent pricing and easy EMI options.
 
-First, run the development server:
+## 🚀 Features
+
+- **Premium UI/UX:** A modern, responsive design featuring a dark-themed hero section and clean, light-themed car listings.
+- **Advanced Car Search & Filtering:** Browse cars with comprehensive filtering (brand, fuel type, transmission, price) and sorting capabilities.
+- **Ratha Assured:** Every car is 167-point inspected, ensuring quality and reliability.
+- **Car Comparison:** Select up to 5 cars to compare their features, prices, and specifications side-by-side.
+- **Detailed Car Information:** View comprehensive details for each car, including discount pricing, EMI options, kilometer driven, and ownership history.
+- **Performant & SEO Optimized:** Built with Next.js App Router for server-side rendering, optimized loading, and excellent SEO.
+
+## 🛠 Tech Stack
+
+- **Framework:** [Next.js](https://nextjs.org/) (App Router, Server Components)
+- **Library:** [React 19](https://react.dev/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **UI Components:** [Shadcn UI](https://ui.shadcn.com/), [Base UI](https://base-ui.com/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/), [tw-animate-css](https://github.com/ikcb/tw-animate-css)
+- **Data Fetching:** Axios
+
+## 📦 Getting Started
+
+### Prerequisites
+
+Ensure you have Node.js installed (v18.17.0 or higher recommended).
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd ratha-frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env.local` file in the root directory and configure the required variables (e.g., API endpoints).
+
+### Running the Development Server
+
+Start the development server:
 
 ```bash
 npm run dev
@@ -10,27 +57,25 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `src/app/`: Next.js App Router pages and layouts.
+  - `page.js`: The landing page with hero and featured cars.
+  - `cars/page.js`: The main car listing and search page.
+- `src/components/`: Reusable React components.
+  - `cars/`: Components related to car display (e.g., `CarCard.jsx`, `CarsListing.jsx`).
+  - `common/`: Shared UI components like `Navbar.jsx`.
+- `src/services/`: API integration and data fetching logic.
+- `src/context/`: React context providers for state sharing.
 
-## Learn More
+## 🚀 Deployment
 
-To learn more about Next.js, take a look at the following resources:
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new) from the creators of Next.js. Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🤝 Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
