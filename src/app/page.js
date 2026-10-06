@@ -3,6 +3,8 @@ import { ArrowRight, Search } from 'lucide-react';
 import { getCarsPaged } from '@/services/carService';
 import CarCard from '@/components/cars/carCard';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const { data: cars } = await getCarsPaged({ limit: 3 });
 
