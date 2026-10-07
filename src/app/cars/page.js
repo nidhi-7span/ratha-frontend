@@ -25,9 +25,10 @@ export default async function CarsPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const search = resolvedSearchParams?.search || '';
   const city = resolvedSearchParams?.city || '';
+  const liked = resolvedSearchParams?.liked || '';
 
   const [{ data: initialCars, total }, facets] = await Promise.all([
-    getCarsPaged({ filters: {}, sortBy: "newest", page: 1, search, city }),
+    getCarsPaged({ filters: { liked }, sortBy: "newest", page: 1, search, city }),
     getCarFacets(),
   ]);
 
@@ -83,7 +84,7 @@ export default async function CarsPage({ searchParams }) {
       </section>
 
       <div className="bg-gray-50 min-h-screen">
-        <CarsListing initialCars={initialCars} total={total} facets={facets} initialSearch={search} initialCity={city} />
+        <CarsListing initialCars={initialCars} total={total} facets={facets} initialSearch={search} initialCity={city} initialLiked={liked} />
       </div>
     </>
   );

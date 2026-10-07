@@ -110,9 +110,9 @@ export default function Navbar() {
           >
             {isMobileSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
           </button>
-          <button className="hover:text-amber-400 transition-colors">
+          <Link href="/saved" className="hover:text-amber-400 transition-colors">
             <Heart className="w-5 h-5" />
-          </button>
+          </Link>
         </div>
       </div>
 

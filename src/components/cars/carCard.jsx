@@ -4,16 +4,39 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Heart, Shield, ArrowRight } from 'lucide-react'
 import { useCompare } from '@/context/CompareContext'
+import { useState } from 'react'
+import { toggleCarLikeAction } from '@/app/actions'
 
 export default function CarCard({ car }) {
   const { addToCompare, removeFromCompare, isInCompare, compareList } = useCompare()
   const checked = isInCompare(car.id)
   const atMax = compareList.length >= 5 && !checked
+  const [isLiked, setIsLiked] = useState(car.Liked === true || car.liked === true)
+  const [isLiking, setIsLiking] = useState(false)
 
   const handleCompare = (e) => {
     if (e.target.checked) addToCompare(car)
     else removeFromCompare(car.id)
   }
+
+  const handleLike = async () => {
+    if (isLiking) return;
+    setIsLiking(true);
+    try {
+      const newStatus = !isLiked;
+      const res = await toggleCarLikeAction(car.id, newStatus);
+      if (res.success) {
+        setIsLiked(!isLiked);
+      } else {
+        console.error("Failed to toggle like status on server");
+      }
+    } catch (error) {
+      console.error("Failed to toggle like status", error);
+    } finally {
+      setIsLiking(false);
+    }
+  }
+
   const discountPct = Math.round(
     ((car.original_price - car.discounted_price) / car.original_price) * 100
   )
@@ -38,8 +61,14 @@ export default function CarCard({ car }) {
         </span>
 
 
-        <button className="absolute top-3 right-3 w-7 h-7 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors">
-          <Heart className="w-3.5 h-3.5 text-gray-600" />
+        <button 
+          onClick={handleLike}
+          disabled={isLiking}
+          className="absolute top-3 right-3 w-7 h-7 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors disabled:opacity-50"
+        >
+          <Heart 
+            className={`w-3.5 h-3.5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
+          />
         </button>
 
         

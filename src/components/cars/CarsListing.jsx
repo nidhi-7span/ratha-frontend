@@ -30,11 +30,12 @@ const EMPTY_FILTERS = {
   ownerTypes: [],
   registrationYears: null,
   kmDriven: null,
+  liked: null,
 }
 
-export default function CarsListing({ initialCars, total: initialTotal, facets, initialSearch = '', initialCity = '' }) {
+export default function CarsListing({ initialCars, total: initialTotal, facets, initialSearch = '', initialCity = '', initialLiked = '' }) {
   const router = useRouter()
-  const [filters, setFilters] = useState(EMPTY_FILTERS)
+  const [filters, setFilters] = useState({ ...EMPTY_FILTERS, liked: initialLiked === 'liked' ? 'liked' : null })
   const [sortBy, setSortBy] = useState('newest')
   const [viewMode, setViewMode] = useState('grid')
 
@@ -108,14 +109,23 @@ export default function CarsListing({ initialCars, total: initialTotal, facets, 
     ...filters.transmissions.map((v) => ({ key: 'transmissions', value: v })),
     ...filters.bodyTypes.map((v) => ({ key: 'bodyTypes', value: v })),
     ...filters.ownerTypes.map((v) => ({ key: 'ownerTypes', value: v })),
+    ...(filters.liked === 'liked' ? [{ key: 'liked', value: 'Liked Cars' }] : []),
   ]
 
-  const removeChip = (key, value) =>
-    setFilters((f) => ({ ...f, [key]: f[key].filter((v) => v !== value) }))
+  const removeChip = (key, value) => {
+    if (key === 'liked') {
+      setFilters((f) => ({ ...f, liked: null }))
+      const url = new URL(window.location)
+      url.searchParams.delete('liked')
+      router.push(url.pathname + url.search)
+    } else {
+      setFilters((f) => ({ ...f, [key]: f[key].filter((v) => v !== value) }))
+    }
+  }
 
   const clearAll = () => {
     setFilters(EMPTY_FILTERS)
-    if (initialSearch || initialCity) router.push('/cars')
+    if (initialSearch || initialCity || filters.liked) router.push('/cars')
   }
 
   return (

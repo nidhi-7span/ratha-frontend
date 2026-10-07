@@ -24,6 +24,10 @@ export const buildCarParams = (filters = {}, sortBy = "newest", search = "", cit
   if (city) {
     params["filter[city][_eq]"] = city;
   }
+  
+  if (filters.liked === 'liked') {
+    params["filter[liked][_eq]"] = true;
+  }
 
   if (filters.priceRange) {
     params["filter[discounted_price][_between]"] = filters.priceRange.join(",");
@@ -116,4 +120,12 @@ export const getCarById = async (id) => {
     },
   });
   return response.data.data[0];
+};
+
+export const toggleCarLike = async (id, newLikedStatus) => {
+  // Use PATCH to update the specific car item in Directus
+  const response = await api.patch(`/cars/${id}`, {
+    liked: newLikedStatus
+  });
+  return response.data.data;
 };
